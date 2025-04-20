@@ -118,31 +118,32 @@
             : 'bg-gray-500 cursor-not-allowed'
         "
         :disabled="!isValid"
+        @click="sendDataScratch"
       >
         Send File
       </button>
     </div>
 
     <div class="flex flex-col border-2 border-gray bg-[#18181B] p-10 rounded-xl w-[50%] mx-auto mt-18">
-      <h2 class="text-white text-3xl mb-10 font-semibold">Project : Game angin tornado</h2>
+      <h2 class="text-white text-3xl mb-10 font-semibold">Project : <span class="text-[#FBBF24]">{{ fileName }}</span></h2>
       <div class="border-t border-white mb-6"></div>
       <div
         class="flex justify-between"
       >
         <div class="flex flex-col gap-4 text-white">
-          <p class="text-[#FBBF24] font-semibold text-4xl">80</p>
+          <p class="text-[#FBBF24] font-semibold text-4xl">{{ creativity }}</p>
           <h2>Creativity Score</h2>
         </div>
         <div class="flex flex-col gap-4 text-white">
-          <p class="text-[#FBBF24] font-semibold text-4xl">80</p>
+          <p class="text-[#FBBF24] font-semibold text-4xl">{{ logical }}</p>
           <h2>Logical Score</h2>
         </div>
         <div class="flex flex-col gap-4 text-white">
-          <p class="text-[#FBBF24] font-semibold text-4xl">80</p>
+          <p class="text-[#FBBF24] font-semibold text-4xl">{{ complexity }}</p>
           <h2>Complexity Score</h2>
         </div>
         <div class="flex flex-col gap-4 text-white">
-          <p class="text-[#FBBF24] font-semibold text-4xl">Intermediate</p>
+          <p class="text-[#FBBF24] font-semibold text-4xl">{{ level }}</p>
           <h2>Level Project</h2>
         </div>
       </div>
@@ -152,12 +153,21 @@
 
 <script setup>
 import { ref } from "vue";
+import { sendFileScratch } from "~/services/modelService";
 
 const selectedFile = ref(null);
 const isDragging = ref(false);
 const fileInput = ref(null);
 const isValid = ref(false);
 const isDropdownOpen = ref(false);
+const complexity = ref(0);
+const logical = ref(0);
+const creativity = ref(0);
+const level = ref("none");
+const fileName = ref("-");
+
+const levelMap = ['Beginner', 'Basic', 'Intermediate', 'Advanced', 'Expert']
+
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
@@ -200,4 +210,21 @@ const handleDeleteFile = () => {
   selectedFile.value = null;
   isValid.value = false;
 };
+
+const sendDataScratch = async() => {
+  const res = await sendFileScratch(selectedFile.value);
+  if(res !== null){
+    complexity.value = res.data.complexity;
+    creativity.value = res.data.creativity;
+    logical.value = res.data.logical;
+
+    const rawLevel = res.data.level;
+    const roundedLevel = Math.round(rawLevel);
+    level.value = levelMap[roundedLevel]
+
+    fileName.value = selectedFile.value.name.split(".")[0]
+    selectedFile.value = null;
+    isValid.value = false;
+  }
+}
 </script>
