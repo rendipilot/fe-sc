@@ -2,9 +2,9 @@
   <div class="flex flex-col h-screen bg-[#09090B]">
     <!-- Header -->
     <div class="flex items-center justify-between w-screen h-20 bg-[#18181B]">
-      <h2 class="text-white text-xl font-semibold ml-4 hover:text-[#FBBF24]">
+      <NuxtLink to="/"><h2 class="text-white text-xl font-semibold ml-4 hover:text-[#FBBF24]">
         Scratch Report
-      </h2>
+      </h2></NuxtLink>
       <div class="flex gap-2 mr-6">
         <p class="text-white font-semibold">Hai andrian</p>
         <button class="text-white hover:text-[#FBBF24]" @click="toggleDropdown">
