@@ -1,16 +1,23 @@
 <template>
   <div class="flex h-screen w-screen bg-[#09090B] justify-center items-center">
     <div class="flex flex-col rounded-xl w-[25%] h-[50%] bg-[#18181B]">
-      <h2 class="flex justify-center mt-5 text-3xl text-[#FBBF24] font-semibold">MKM Coding</h2>
+      <h2
+        class="flex justify-center mt-5 text-3xl text-[#FBBF24] font-semibold"
+      >
+        MKM Coding
+      </h2>
       <h2 class="flex justify-center mt-3 text-3xl text-white font-semibold">
         Login
       </h2>
-      <form class="flex flex-col gap-6 mt-10">
+      <form class="flex flex-col gap-6 mt-10"  @submit.prevent="loginHandler">
         <div class="flex flex-col gap-2">
           <label class="text-white ml-6">Email address</label>
           <input
+            :type="email"
             class="w-auto mx-6 py-2 px-2 text-gray-200 rounded-md bg-[#242427]"
-            placeholder="masukkan email"
+            pattern=".+@gmail\.com"
+            v-model="email"
+            placeholder="gunakan @gmail.com"
           />
         </div>
         <div class="flex flex-col gap-2 overflow-hidden">
@@ -18,6 +25,8 @@
           <input
             class="w-auto mx-6 py-2 px-2 text-gray-200 rounded-md bg-[#242427]"
             placeholder="masukkan password"
+            :type="showPassword ? 'text' : 'password'"
+            v-model="password"
           />
           <div class="flex justify-between mx-6">
             <label class="text-gray-400 text-sm flex items-center gap-2">
@@ -38,4 +47,20 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const email = ref('')
+const password = ref('')
+const showPassword = ref(false);
+
+definePageMeta({
+  middleware: 'redirect-if-login'
+})
+
+const loginHandler = async () => {
+  if(email.value === "admin@gmail.com" && password.value === "qwertyu"){
+    const cookie = useCookie('scr-token');
+    cookie.value = "walawe"
+    await navigateTo("/")
+  }
+}
+</script>

@@ -168,6 +168,10 @@ const fileName = ref("-");
 
 const levelMap = ['Beginner', 'Basic', 'Intermediate', 'Advanced', 'Expert']
 
+definePageMeta({
+  middleware: 'auth'
+})
+
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
