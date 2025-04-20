@@ -41,7 +41,15 @@
         </div>
       </div>
     </div>
-    <h2 class="mt-10 text-3xl font-semibold mx-auto">Teacher</h2>
+    <div
+      class="flex w-[80%] mx-auto mt-10 justify-between items-center"
+    >
+      <h2 class="text-3xl font-semibold">Teacher</h2>
+      <input
+        class="w-auto py-4 px-4 text-gray-200 rounded-md bg-[#242427]"
+        placeholder="searching"
+      />
+    </div>
     <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 mt-4 w-[80%] mx-auto">
     <table class="table">
       <!-- head -->
