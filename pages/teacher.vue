@@ -144,6 +144,12 @@
 <script setup>
 import { ref } from "vue";
 
+
+definePageMeta({
+  middleware: 'auth'
+})
+
+
 const isDropdownOpen = ref(false);
 
 const toggleDropdown = () => {

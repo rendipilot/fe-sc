@@ -30,7 +30,7 @@
         >
           <button
             class="w-full text-left px-4 py-2 text-white hover:bg-red-600 transition duration-150 rounded-md"
-            @click="logout"
+            @click="logoutHandler"
           >
             Logout
           </button>
@@ -232,5 +232,11 @@ const sendDataScratch = async() => {
     selectedFile.value = null;
     isValid.value = false;
   }
+}
+
+const logoutHandler = async() => {
+  const cookie = useCookie("scr-token");
+  cookie.value = null;
+  await navigateTo("/login")
 }
 </script>
