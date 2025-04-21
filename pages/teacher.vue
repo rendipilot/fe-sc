@@ -81,9 +81,9 @@
           <tr v-for="(person, index) in people" :key="index">
             <th>{{ index + 1 }}</th>
             <td>{{ person.name }}</td>
-            <td>{{ person.job }}</td>
+            <td>{{ person.join }}</td>
             <td>
-              <button class="text-[#06D001]">
+              <button :class="person.active ? 'text-[#06D001]' : 'text-red-500'">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -195,9 +195,9 @@ const toggleDropdown = () => {
 };
 
 const people = [
-  { name: "Cy Ganderton", job: "Quality Control Specialist", color: "Blue" },
-  { name: "Hart Hagerty", job: "Desktop Support Technician", color: "Purple" },
-  { name: "Brice Swyre", job: "Tax Accountant", color: "Red" },
+  { name: "Rendy Eka Febriyanto", join: "2022", active: true },
+  { name: "Indra Kurniawan", join: "2022", active: true },
+  { name: "Muhammada Andriyan Ichsan", join: "2024", active: true },
 ];
 
 // Hitung berapa baris kosong yang perlu ditambahkan
