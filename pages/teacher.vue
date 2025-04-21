@@ -1,9 +1,11 @@
 <template>
   <div class="flex flex-col h-screen bg-[#09090B]">
     <div class="flex items-center justify-between w-screen h-20 bg-[#18181B]">
-      <NuxtLink to="/"><h2 class="text-white text-xl font-semibold ml-4 hover:text-[#FBBF24]">
-        Scratch Report
-      </h2></NuxtLink>
+      <NuxtLink to="/"
+        ><h2 class="text-white text-xl font-semibold ml-4 hover:text-[#FBBF24]">
+          Scratch Report
+        </h2></NuxtLink
+      >
       <div class="flex gap-2 mr-6">
         <p class="text-white font-semibold">Hai andrian</p>
         <button class="text-white hover:text-[#FBBF24]" @click="toggleDropdown">
@@ -35,60 +37,91 @@
           </button>
           <NuxtLink to="/history">
             <button
-            class="w-full text-left px-4 py-2 text-white hover:bg-[#FBBF24] mt-4 transition duration-150 rounded-md"
-          >
-            History Data
-          </button>
+              class="w-full text-left px-4 py-2 text-white hover:bg-[#FBBF24] mt-4 transition duration-150 rounded-md"
+            >
+              History Data
+            </button>
           </NuxtLink>
           <NuxtLink to="/teacher">
             <button
-            class="w-full text-left px-4 py-2 text-white hover:bg-[#06D001] mt-4 transition duration-150 rounded-md"
-          >
-            Teacher
-          </button>
+              class="w-full text-left px-4 py-2 text-white hover:bg-[#06D001] mt-4 transition duration-150 rounded-md"
+            >
+              Teacher
+            </button>
           </NuxtLink>
         </div>
       </div>
     </div>
-    <div
-      class="flex w-[80%] mx-auto mt-10 justify-between items-center"
-    >
+    <div class="flex mt-10 w-[80%] mx-auto">
       <h2 class="text-3xl font-semibold">Teacher</h2>
+    </div>
+    <div class="flex w-[80%] mx-auto mt-5 justify-between items-center">
+      <button class="py-2 px-2 bg-[#FBBF24] rounded-md font-semibold">New Teacher</button>
       <input
         class="w-auto py-4 px-4 text-gray-200 rounded-md bg-[#242427]"
         placeholder="searching"
       />
     </div>
-    <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 mt-4 w-[80%] mx-auto">
-    <table class="table">
-      <!-- head -->
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Job</th>
-          <th>Favorite Color</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Render data yang ada -->
-        <tr v-for="(person, index) in people" :key="index">
-          <th>{{ index + 1 }}</th>
-          <td>{{ person.name }}</td>
-          <td>{{ person.job }}</td>
-          <td>{{ person.color }}</td>
-        </tr>
+    <div
+      class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 mt-4 w-[80%] mx-auto"
+    >
+      <table class="table">
+        <!-- head -->
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Join</th>
+            <th>Aktif</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Render data yang ada -->
+          <tr v-for="(person, index) in people" :key="index">
+            <th>{{ index + 1 }}</th>
+            <td>{{ person.name }}</td>
+            <td>{{ person.job }}</td>
+            <td>
+              <button class="text-[#06D001]">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  />
+                </svg>
+              </button>
+            </td>
+            <td>
+              <div class="flex gap-4">
+                <button class="px-2 py-2 text-[#FBBF24] rounded-md">
+                  Edit
+                </button>
+                <button class="px-2 py-2 text-red-500 rounded-md">
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
 
-        <!-- Tambahkan baris kosong kalau kurang dari 10 -->
-        <tr v-for="i in emptyRows" :key="'empty-' + i">
-          <th class="opacity-50">{{ people.length + i }}</th>
-          <td class="opacity-50">-</td>
-          <td class="opacity-50">-</td>
-          <td class="opacity-50">-</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+          <!-- Tambahkan baris kosong kalau kurang dari 10 -->
+          <tr v-for="i in emptyRows" :key="'empty-' + i">
+            <th class="opacity-50">{{ people.length + i }}</th>
+            <td class="opacity-50">-</td>
+            <td class="opacity-50">-</td>
+            <td class="opacity-50">-</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="join mt-4 w-[80%] justify-end mx-auto">
       <button class="join-item btn btn-outline mr-1 rounded-md">
         Previous
@@ -151,11 +184,9 @@
 <script setup>
 import { ref } from "vue";
 
-
 definePageMeta({
-  middleware: 'auth'
-})
-
+  middleware: "auth",
+});
 
 const isDropdownOpen = ref(false);
 
@@ -164,17 +195,17 @@ const toggleDropdown = () => {
 };
 
 const people = [
-  { name: 'Cy Ganderton', job: 'Quality Control Specialist', color: 'Blue' },
-  { name: 'Hart Hagerty', job: 'Desktop Support Technician', color: 'Purple' },
-  { name: 'Brice Swyre', job: 'Tax Accountant', color: 'Red' }
+  { name: "Cy Ganderton", job: "Quality Control Specialist", color: "Blue" },
+  { name: "Hart Hagerty", job: "Desktop Support Technician", color: "Purple" },
+  { name: "Brice Swyre", job: "Tax Accountant", color: "Red" },
 ];
 
 // Hitung berapa baris kosong yang perlu ditambahkan
 const emptyRows = 10 - people.length;
 
-const logoutHandler = async() => {
+const logoutHandler = async () => {
   const cookie = useCookie("scr-token");
   cookie.value = null;
-  await navigateTo("/login")
-}
+  await navigateTo("/login");
+};
 </script>

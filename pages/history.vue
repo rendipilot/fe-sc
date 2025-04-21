@@ -70,8 +70,12 @@
           <tr>
             <th>#</th>
             <th>Name</th>
-            <th>Job</th>
-            <th>Favorite Color</th>
+            <th>Creativity score</th>
+            <th>Logical score</th>
+            <th>Complexity score</th>
+            <th>Level proyek</th>
+            <th>Tanggal</th>
+            <th>Teacher</th>
           </tr>
         </thead>
         <tbody>
@@ -93,6 +97,8 @@
         </tbody>
       </table>
     </div>
+
+
     <div class="join mt-4 w-[80%] justify-end mx-auto">
       <button class="join-item btn btn-outline mr-1 rounded-md">
         Previous
