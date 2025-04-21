@@ -29,7 +29,7 @@
         >
           <button
             class="w-full text-left px-4 py-2 text-white hover:bg-red-600 transition duration-150 rounded-md"
-            @click="logout"
+            @click="logoutHandler"
           >
             Logout
           </button>
@@ -38,6 +38,13 @@
             class="w-full text-left px-4 py-2 text-white hover:bg-[#FBBF24] mt-4 transition duration-150 rounded-md"
           >
             History Data
+          </button>
+          </NuxtLink>
+          <NuxtLink to="/teacher">
+            <button
+            class="w-full text-left px-4 py-2 text-white hover:bg-[#06D001] mt-4 transition duration-150 rounded-md"
+          >
+            Teacher
           </button>
           </NuxtLink>
         </div>
@@ -168,4 +175,11 @@ const people = [
 
 // Hitung berapa baris kosong yang perlu ditambahkan
 const emptyRows = 10 - people.length;
+
+
+const logoutHandler = async() => {
+  const cookie = useCookie("scr-token");
+  cookie.value = null;
+  await navigateTo("/login")
+}
 </script>

@@ -41,6 +41,13 @@
             History Data
           </button>
           </NuxtLink>
+          <NuxtLink to="/teacher">
+            <button
+            class="w-full text-left px-4 py-2 text-white hover:bg-[#06D001] mt-4 transition duration-150 rounded-md"
+          >
+            Teacher
+          </button>
+          </NuxtLink>
         </div>
       </div>
     </div>
