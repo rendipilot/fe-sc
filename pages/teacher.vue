@@ -33,11 +33,13 @@
           >
             Logout
           </button>
-          <button
+          <NuxtLink to="/history">
+            <button
             class="w-full text-left px-4 py-2 text-white hover:bg-[#FBBF24] mt-4 transition duration-150 rounded-md"
           >
             History Data
           </button>
+          </NuxtLink>
         </div>
       </div>
     </div>
