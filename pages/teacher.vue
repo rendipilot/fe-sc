@@ -29,12 +29,6 @@
           v-if="isDropdownOpen"
           class="absolute top-14 right-4 w-48 bg-[#1F1F23] border border-gray-700 rounded-md shadow-lg z-50 p-6"
         >
-          <button
-            class="w-full text-left px-4 py-2 text-white hover:bg-red-600 transition duration-150 rounded-md"
-            @click="logoutHandler"
-          >
-            Logout
-          </button>
           <NuxtLink to="/history">
             <button
               class="w-full text-left px-4 py-2 text-white hover:bg-[#FBBF24] mt-4 transition duration-150 rounded-md"
@@ -49,6 +43,19 @@
               Teacher
             </button>
           </NuxtLink>
+          <NuxtLink to="/teacher">
+            <button
+              class="w-full text-left px-4 py-2 text-white hover:bg-[#0118D8] mt-4 transition duration-150 rounded-md"
+            >
+              My Account
+            </button>
+          </NuxtLink>
+          <button
+            class="w-full text-left px-4 py-2 text-white hover:bg-red-600 mt-4 transition duration-150 rounded-md"
+            @click="logoutHandler"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>
@@ -56,7 +63,12 @@
       <h2 class="text-3xl font-semibold">Teacher</h2>
     </div>
     <div class="flex w-[80%] mx-auto mt-5 justify-between items-center">
-      <button class="py-2 px-2 bg-[#FBBF24] rounded-md font-semibold">New Teacher</button>
+      <button
+        class="py-2 px-2 bg-[#FBBF24] rounded-md font-semibold"
+        @click="modelHandler"
+      >
+        New Teacher
+      </button>
       <input
         class="w-auto py-4 px-4 text-gray-200 rounded-md bg-[#242427]"
         placeholder="searching"
@@ -83,7 +95,9 @@
             <td>{{ person.name }}</td>
             <td>{{ person.join }}</td>
             <td>
-              <button :class="person.active ? 'text-[#06D001]' : 'text-red-500'">
+              <button
+                :class="person.active ? 'text-[#06D001]' : 'text-red-500'"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -178,6 +192,17 @@
 
       <button class="join-item btn btn-outline ml-1 rounded-md">Next</button>
     </div>
+
+    <!-- Modal -->
+    <dialog ref="modalRef" class="modal">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold text-white">Add Teacher</h3>
+        <p class="py-4 text-white">Ini adalah isi modal</p>
+        <div class="modal-action">
+          <button class="btn" @click="modalRef?.close()">Tutup</button>
+        </div>
+      </div>
+    </dialog>
   </div>
 </template>
 
@@ -189,6 +214,7 @@ definePageMeta({
 });
 
 const isDropdownOpen = ref(false);
+const modalRef = ref(null);
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
@@ -202,6 +228,14 @@ const people = [
 
 // Hitung berapa baris kosong yang perlu ditambahkan
 const emptyRows = 10 - people.length;
+
+const modelHandler = () => {
+  modalRef.value?.showModal();
+};
+
+const closeModal = () => {
+  modalRef.value?.close();
+};
 
 const logoutHandler = async () => {
   const cookie = useCookie("scr-token");
