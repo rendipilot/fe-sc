@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col h-screen bg-[#09090B]">
     <div class="flex items-center justify-between w-screen h-20 bg-[#18181B]">
+      
       <NuxtLink to="/"
         ><h2 class="text-white text-xl font-semibold ml-4 hover:text-[#FBBF24]">
           Scratch Report
@@ -29,6 +30,13 @@
           v-if="isDropdownOpen"
           class="absolute top-14 right-4 w-48 bg-[#1F1F23] border border-gray-700 rounded-md shadow-lg z-50 p-6"
         >
+        <NuxtLink to="/">
+            <button
+            class="w-full text-left px-4 py-2 text-white hover:bg-[#410445] mt-4 transition duration-150 rounded-md"
+          >
+            Home
+          </button>
+          </NuxtLink>
           <NuxtLink to="/history">
             <button
               class="w-full text-left px-4 py-2 text-white hover:bg-[#FBBF24] mt-4 transition duration-150 rounded-md"
@@ -43,7 +51,7 @@
               Teacher
             </button>
           </NuxtLink>
-          <NuxtLink to="/teacher">
+          <NuxtLink to="/user">
             <button
               class="w-full text-left px-4 py-2 text-white hover:bg-[#0118D8] mt-4 transition duration-150 rounded-md"
             >
