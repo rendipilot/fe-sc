@@ -96,16 +96,6 @@
           />
         </div>
         <div class="flex flex-col gap-2">
-          <label class="text-white ml-6">Password</label>
-          <input
-            :type="email"
-            class="w-auto mx-6 py-2 px-2 text-gray-200 rounded-md bg-[#242427]"
-            pattern=".+@gmail\.com"
-            v-model="email"
-            placeholder="gunakan @gmail.com"
-          />
-        </div>
-        <div class="flex flex-col gap-2">
           <label class="text-white ml-6">Status</label>
           <h2 class="flex gap-2 ml-6 text-white font-semibold">
             <span class="text-[#06D001]">
@@ -134,6 +124,47 @@
           </button>
         </div>
       </form>
+
+      <div class="flex flex-col gap-2 mt-4">
+        <label class="text-white ml-6">Password</label>
+        <button
+          type="button"
+          class="ml-6 bg-[#410445] w-48 px-2 py-2 rounded-md"
+          @click="modalChangePasswordHandler"
+        >
+          Change Password
+        </button>
+      </div>
+      <dialog ref="modalChangePassword" class="modal">
+        <div class="modal-box bg-[#18181B]">
+          <h3 class="text-lg font-bold text-white">Change Password</h3>
+          <form class="flex flex-col gap-4 mt-6">
+            <div class="flex flex-col gap-2 mt-2">
+              <label class="text-white  ml-6">Old password</label>
+              <input
+                :type="password"
+                class="w-auto mx-6 py-2 px-2 text-gray-200 rounded-md bg-[#242427]"
+              />
+            </div>
+            <div class="flex flex-col gap-2 mt-2">
+              <label class="text-white ml-6">New password</label>
+              <input
+                :type="password"
+                class="w-auto mx-6 py-2 px-2 text-gray-200 rounded-md bg-[#242427]"
+              />
+            </div>
+          </form>
+          <div class="modal-action">
+            <button class="btn bg-[#FBBF24]">Save</button>
+            <button
+              class="btn bg-red-500"
+              @click="modalChangePassword?.close()"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   </div>
 </template>
@@ -144,6 +175,11 @@ definePageMeta({
 });
 
 const isDropdownOpen = ref(false);
+const modalChangePassword = ref(null);
+
+const modalChangePasswordHandler = () => {
+  modalChangePassword.value?.showModal();
+};
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;

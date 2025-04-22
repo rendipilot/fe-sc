@@ -9,7 +9,7 @@
       <h2 class="flex justify-center mt-3 text-3xl text-white font-semibold">
         Login
       </h2>
-      <form class="flex flex-col gap-6 mt-10"  @submit.prevent="loginHandler">
+      <form class="flex flex-col gap-6 mt-10" @submit.prevent="loginHandler">
         <div class="flex flex-col gap-2">
           <label class="text-white ml-6">Email address</label>
           <input
@@ -42,25 +42,49 @@
             Sign In
           </button>
         </div>
+        <h2 class="flex justify-center mx-6">
+          Lupa password ? <span class="ml-2"> <button class="text-[#FBBF24]" @click="modalForgotPasswordHandler">Hubungi admin</button></span>
+        </h2>
       </form>
+      <dialog ref="modalForgotPassword" class="modal">
+        <div class="modal-box bg-[#18181B]">
+          <h3 class="text-lg font-bold text-white">Forgot Password</h3>
+          <p class="mt-2">Hubungin admin melalui whatsapp dan berikan permintaan untuk password sementara, login dengan password yang diberikan dan ganti password setelah login</p>
+          <div class="modal-action">
+            <button
+              class="btn bg-red-500"
+              @click="modalForgotPassword?.close()"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   </div>
 </template>
 
 <script setup>
-const email = ref('')
-const password = ref('')
+const email = ref("");
+const password = ref("");
 const showPassword = ref(false);
 
 definePageMeta({
-  middleware: 'redirect-if-login'
-})
+  middleware: "redirect-if-login",
+});
+
+const modalForgotPassword = ref(null);
+
+const modalForgotPasswordHandler = () => {
+  modalForgotPassword.value?.showModal();
+}
+
 
 const loginHandler = async () => {
-  if(email.value === "admin@gmail.com" && password.value === "qwertyu"){
-    const cookie = useCookie('scr-token');
-    cookie.value = "walawe"
-    await navigateTo("/")
+  if (email.value === "admin@gmail.com" && password.value === "qwertyu") {
+    const cookie = useCookie("scr-token");
+    cookie.value = "walawe";
+    await navigateTo("/");
   }
-}
+};
 </script>
