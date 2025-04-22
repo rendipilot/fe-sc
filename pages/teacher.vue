@@ -1,7 +1,6 @@
 <template>
   <div class="flex flex-col h-screen bg-[#09090B]">
     <div class="flex items-center justify-between w-screen h-20 bg-[#18181B]">
-      
       <NuxtLink to="/"
         ><h2 class="text-white text-xl font-semibold ml-4 hover:text-[#FBBF24]">
           Scratch Report
@@ -30,12 +29,12 @@
           v-if="isDropdownOpen"
           class="absolute top-14 right-4 w-48 bg-[#1F1F23] border border-gray-700 rounded-md shadow-lg z-50 p-6"
         >
-        <NuxtLink to="/">
+          <NuxtLink to="/">
             <button
-            class="w-full text-left px-4 py-2 text-white hover:bg-[#410445] mt-4 transition duration-150 rounded-md"
-          >
-            Home
-          </button>
+              class="w-full text-left px-4 py-2 text-white hover:bg-[#410445] mt-4 transition duration-150 rounded-md"
+            >
+              Home
+            </button>
           </NuxtLink>
           <NuxtLink to="/history">
             <button
@@ -91,6 +90,7 @@
           <tr>
             <th>#</th>
             <th>Name</th>
+            <th>Email</th>
             <th>Join</th>
             <th>Aktif</th>
             <th></th>
@@ -101,6 +101,7 @@
           <tr v-for="(person, index) in people" :key="index">
             <th>{{ index + 1 }}</th>
             <td>{{ person.name }}</td>
+            <td>{{ person.email }}</td>
             <td>{{ person.join }}</td>
             <td>
               <button
@@ -124,10 +125,10 @@
             </td>
             <td>
               <div class="flex gap-4">
-                <button class="px-2 py-2 text-[#FBBF24] rounded-md">
+                <button class="px-2 py-2 text-[#FBBF24] rounded-md" @click="editHandler(person.id)">
                   Edit
                 </button>
-                <button class="px-2 py-2 text-red-500 rounded-md">
+                <button class="px-2 py-2 text-red-500 rounded-md" @click="deleteHandler(person.id)">
                   Delete
                 </button>
               </div>
@@ -203,11 +204,58 @@
 
     <!-- Modal -->
     <dialog ref="modalRef" class="modal">
-      <div class="modal-box">
+      <div class="modal-box bg-[#18181B]">
         <h3 class="text-lg font-bold text-white">Add Teacher</h3>
-        <p class="py-4 text-white">Ini adalah isi modal</p>
+        <form class="mt-4">
+          <div class="flex flex-col gap-2 mt-2">
+            <label class="ml-6">Nama</label>
+            <input :value="username" class="w-auto mx-6 py-2 px-2 rounded-md bg-[#242427]" />
+          </div>
+          <div class="flex flex-col gap-2 mt-2">
+            <label class="ml-6">Email</label>
+            <input
+              :type="email"
+              :value="emailUser"
+              pattern=".+@gmail\.com"
+              class="w-auto mx-6 py-2 px-2 rounded-md bg-[#242427]"
+            />
+          </div>
+          <div class="flex flex-col gap-2 mt-2">
+            <label class="ml-6">Password</label>
+            <div class="flex items-center gap-2 mx-6">
+              <input
+                class="py-2 px-2 rounded-md bg-[#242427] text-white w-full"
+                :value="password"
+                readonly
+              />
+              <button
+              type="button"
+                @click="generatePassword"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md"
+              >
+                Generate
+              </button>
+            </div>
+          </div>
+        </form>
         <div class="modal-action">
-          <button class="btn" @click="modalRef?.close()">Tutup</button>
+          <button class="bg-[#FBBF24] btn">Save</button>
+          <button class="btn bg-red-500" @click="closeModal">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="modal" ref="modalDeleteTeacher">
+      <div class="modal-box">
+        <h3>Hapus Teacher</h3>
+        <p class="mt-2 font-semibold">Apakah anda yakin menghapus data guru ini?</p>
+        <div class="modal-action">
+          <button class="bg-[#FBBF24] btn">Save</button>
+          <button class="btn bg-red-500" @click="closeModalDeleteTeacher">
+            Tutup
+          </button>
         </div>
       </div>
     </dialog>
@@ -223,15 +271,37 @@ definePageMeta({
 
 const isDropdownOpen = ref(false);
 const modalRef = ref(null);
+const modalDeleteTeacher = ref(null)
+const username = ref('')
+const emailUser = ref('')
+const password = ref('')
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 
 const people = [
-  { name: "Rendy Eka Febriyanto", join: "2022", active: true },
-  { name: "Indra Kurniawan", join: "2022", active: true },
-  { name: "Muhammada Andriyan Ichsan", join: "2024", active: true },
+  {
+    id: 1,
+    name: "Rendy Eka Febriyanto",
+    email: "test@gmail.com",
+    join: "2022",
+    active: true,
+  },
+  {
+    id: 2,
+    name: "Indra Kurniawan",
+    email: "test@gmail.com",
+    join: "2022",
+    active: true,
+  },
+  {
+    id: 3,
+    name: "Muhammada Andriyan Ichsan",
+    email: "test@gmail.com",
+    join: "2024",
+    active: true,
+  },
 ];
 
 // Hitung berapa baris kosong yang perlu ditambahkan
@@ -242,7 +312,12 @@ const modelHandler = () => {
 };
 
 const closeModal = () => {
+  password.value = ''
   modalRef.value?.close();
+};
+
+const closeModalDeleteTeacher = () => {
+  modalDeleteTeacher.value?.close();
 };
 
 const logoutHandler = async () => {
@@ -250,4 +325,28 @@ const logoutHandler = async () => {
   cookie.value = null;
   await navigateTo("/login");
 };
+
+const generatePassword = () => {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let newPassword = ''
+  for (let i = 0; i < 8; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length)
+    newPassword += chars[randomIndex]
+  }
+  password.value = newPassword
+}
+
+const editHandler = (id) => {
+  const person = people.find(p => p.id === id)
+  username.value = person.name
+  emailUser.value = person.email
+
+  modalRef.value?.showModal()
+
+  console.log(username.value)
+}
+
+const deleteHandler = (id) => {
+  modalDeleteTeacher.value?.showModal();
+}
 </script>
