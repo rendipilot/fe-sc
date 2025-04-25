@@ -65,6 +65,8 @@
 </template>
 
 <script setup>
+import { sendLoginData } from '~/services/loginService';
+
 const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
@@ -79,12 +81,13 @@ const modalForgotPasswordHandler = () => {
   modalForgotPassword.value?.showModal();
 }
 
-
 const loginHandler = async () => {
-  if (email.value === "admin@gmail.com" && password.value === "qwertyu") {
-    const cookie = useCookie("scr-token");
-    cookie.value = "walawe";
-    await navigateTo("/");
-  }
+  const result = await sendLoginData({ "email": email.value, "password": password.value });
+
+ if(result !== null){
+  
+ }else{
+  console.log("login tidak behasil handler")
+ }
 };
 </script>
