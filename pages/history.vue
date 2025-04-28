@@ -5,7 +5,7 @@
         Scratch Report
       </h2></NuxtLink>
       <div class="flex gap-2 mr-6">
-        <p class="text-white font-semibold">Hai andrian</p>
+        <p class="text-white font-semibold">Hai {{ userData.user.username.split(' ')[0] }}</p>
         <button class="text-white hover:text-[#FBBF24]" @click="toggleDropdown">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -43,6 +43,7 @@
           </NuxtLink>
           <NuxtLink to="/teacher">
             <button
+              v-if="userData.user?.role === 'admin'"
             class="w-full text-left px-4 py-2 text-white hover:bg-[#06D001] mt-4 transition duration-150 rounded-md"
           >
             Teacher
@@ -175,12 +176,13 @@
 <script setup>
 import { ref } from "vue";
 
-const isDropdownOpen = ref(false);
-
 
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'page'
 })
+
+const isDropdownOpen = ref(false);
+const userData = useUserStore();
 
 
 const toggleDropdown = () => {
@@ -198,8 +200,7 @@ const emptyRows = 10 - people.length;
 
 
 const logoutHandler = async() => {
-  const cookie = useCookie("scr-token");
-  cookie.value = null;
+  userData.logout();
   await navigateTo("/login")
 }
 </script>

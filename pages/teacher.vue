@@ -321,8 +321,6 @@ const closeModalDeleteTeacher = () => {
 };
 
 const logoutHandler = async () => {
-  const cookie = useCookie("scr-token");
-  cookie.value = null;
   await navigateTo("/login");
 };
 

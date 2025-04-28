@@ -1,25 +1,16 @@
-import axios from "axios";
-
 export const sendLoginData = async (data) => {
-    console.log("data yang dikirim ", data)
   try {
-    const res = await axios.post("http://localhost:5000/login", data, {
+    const response = await $fetch('http://localhost:5000/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
+        'Content-Type': 'application/json',
+      }
     });
-
-    console.log("Mengirimkan data");
-
-    if (res.status === 200) {
-      return res.data;
-    } else {
-      console.error("Login gagal dengan status: ", res.status);
-      return null;
-    }
+    return response;
   } catch (error) {
-    console.log("Error login = ", error);
+    console.error("Login error:", error);
     return null;
   }
 };

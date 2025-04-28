@@ -6,7 +6,7 @@
         Scratch Report
       </h2></NuxtLink>
       <div class="flex gap-2 mr-6">
-        <p class="text-white font-semibold">Hai andrian</p>
+      <p class="text-white font-semibold">Hai {{ userData.user?.username.split(' ')[0] }}</p>
         <button class="text-white hover:text-[#FBBF24]" @click="toggleDropdown">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -44,6 +44,7 @@
           </NuxtLink>
           <NuxtLink to="/teacher">
             <button
+              v-if="userData.user?.role === 'admin'"
             class="w-full text-left px-4 py-2 text-white hover:bg-[#06D001] mt-4 transition duration-150 rounded-md"
           >
             Teacher
@@ -178,6 +179,11 @@
 import { ref } from "vue";
 import { sendFileScratch } from "~/services/modelService";
 
+
+definePageMeta({
+  middleware: ["page"]
+})
+
 const selectedFile = ref(null);
 const isDragging = ref(false);
 const fileInput = ref(null);
@@ -188,13 +194,9 @@ const logical = ref(0);
 const creativity = ref(0);
 const level = ref("none");
 const fileName = ref("-");
+const userData = useUserStore();
 
 const levelMap = ['Beginner', 'Basic', 'Intermediate', 'Advanced', 'Expert']
-
-definePageMeta({
-  middleware: 'auth'
-})
-
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
@@ -256,8 +258,7 @@ const sendDataScratch = async() => {
 }
 
 const logoutHandler = async() => {
-  const cookie = useCookie("scr-token");
-  cookie.value = null;
+  userData.logout();
   await navigateTo("/login")
 }
 </script>

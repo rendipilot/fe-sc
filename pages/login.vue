@@ -34,6 +34,9 @@
               Show Password
             </label>
           </div>
+          <div v-if="errorLogin" class="flex mx-6">
+            <p class="text-red-500">{{ errorLogin }}</p>
+          </div>
         </div>
         <div class="flex">
           <button
@@ -43,13 +46,22 @@
           </button>
         </div>
         <h2 class="flex justify-center mx-6">
-          Lupa password ? <span class="ml-2"> <button class="text-[#FBBF24]" @click="modalForgotPasswordHandler">Hubungi admin</button></span>
+          Lupa password ?
+          <span class="ml-2">
+            <button class="text-[#FBBF24]" @click="modalForgotPasswordHandler">
+              Hubungi admin
+            </button></span
+          >
         </h2>
       </form>
       <dialog ref="modalForgotPassword" class="modal">
         <div class="modal-box bg-[#18181B]">
           <h3 class="text-lg font-bold text-white">Forgot Password</h3>
-          <p class="mt-2">Hubungin admin melalui whatsapp dan berikan permintaan untuk password sementara, login dengan password yang diberikan dan ganti password setelah login</p>
+          <p class="mt-2">
+            Hubungin admin melalui whatsapp dan berikan permintaan untuk
+            password sementara, login dengan password yang diberikan dan ganti
+            password setelah login
+          </p>
           <div class="modal-action">
             <button
               class="btn bg-red-500"
@@ -65,29 +77,34 @@
 </template>
 
 <script setup>
-import { sendLoginData } from '~/services/loginService';
+definePageMeta({
+  middleware: ["auth-login"]
+})
 
 const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
-
-definePageMeta({
-  middleware: "redirect-if-login",
-});
+const errorLogin = ref("");
+const userData = useUserStore();
 
 const modalForgotPassword = ref(null);
 
 const modalForgotPasswordHandler = () => {
   modalForgotPassword.value?.showModal();
-}
+};
 
 const loginHandler = async () => {
-  const result = await sendLoginData({ "email": email.value, "password": password.value });
+  const res = await userData.login({
+    email: email.value,
+    password: password.value,
+  });
 
- if(result !== null){
-  
- }else{
-  console.log("login tidak behasil handler")
- }
+  if (res.valid) {
+    console.log("data yang diterima ", res);
+    await navigateTo("/")
+  } else {
+    errorLogin.value = "email atau password salah";
+    console.log("login tidak behasil handler");
+  }
 };
 </script>
