@@ -1,16 +1,14 @@
-import axios from "axios";
-
 export const sendFileScratch = async (file) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await axios.post("http://localhost:5000/predict", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    const res = await $fetch("http://localhost:5000/predict", {
+      method: 'POST',
+      body: formData,
+      credentials: "include"
     });
-    return res.data;
+    return res;
   } catch (error) {
     console.log(error);
     return null;
