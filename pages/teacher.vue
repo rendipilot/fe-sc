@@ -266,8 +266,8 @@
 import { ref } from "vue";
 
 definePageMeta({
-  middleware: "auth",
-});
+  middleware: ["page-admin"]
+})
 
 const isDropdownOpen = ref(false);
 const modalRef = ref(null);
