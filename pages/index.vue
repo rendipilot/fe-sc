@@ -181,7 +181,7 @@ import { sendFileScratch } from "~/services/modelService";
 
 
 definePageMeta({
-  middleware: ["page"]
+  middleware: "page",
 })
 
 const selectedFile = ref(null);
@@ -257,8 +257,8 @@ const sendDataScratch = async() => {
   }
 }
 
-const logoutHandler = async() => {
-  userData.logout();
+const logoutHandler = async () => {
+  await userData.logout();
   await navigateTo("/login")
 }
 </script>

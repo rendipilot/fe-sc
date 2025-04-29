@@ -275,6 +275,7 @@ const modalDeleteTeacher = ref(null)
 const username = ref('')
 const emailUser = ref('')
 const password = ref('')
+const userData = useUserStore();
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
@@ -321,6 +322,7 @@ const closeModalDeleteTeacher = () => {
 };
 
 const logoutHandler = async () => {
+  await userData.logout();
   await navigateTo("/login");
 };
 

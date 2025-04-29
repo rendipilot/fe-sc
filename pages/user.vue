@@ -223,7 +223,7 @@ const modalChangePasswordHandler = (open) => {
 };
 
 const logoutHandler = async () => {
-  userData.logout();
+  await userData.logout();
   await navigateTo("/login");
 };
 

@@ -97,8 +97,8 @@
         </thead>
         <tbody>
           <!-- Render data yang ada -->
-          <tr v-for="(history, index) in filteredHistories" :key="index">
-            <th>{{ index + 1 }}</th>
+          <tr v-for="(history, index) in paginatedHistories" :key="index">
+            <th>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</th>
             <td>{{ history.name }}</td>
             <td>{{ history.creativity_score }}</td>
             <td>{{ history.logical_score }}</td>
@@ -109,8 +109,11 @@
           </tr>
 
           <!-- Tambahkan baris kosong kalau kurang dari 10 -->
-          <tr v-for="i in emptyRows" :key="'empty-' + i">
-            <th class="opacity-50">{{ histories.length + i }}</th>
+          <tr
+            v-for="i in Math.max(itemsPerPage - paginatedHistories.length, 0)"
+            :key="'empty-' + i"
+          >
+            <th class="opacity-50">{{ paginatedHistories.length + i }}</th>
             <td class="opacity-50">-</td>
             <td class="opacity-50">-</td>
             <td class="opacity-50">-</td>
@@ -124,67 +127,41 @@
     </div>
 
     <div class="join mt-4 w-[80%] justify-end mx-auto">
-      <button class="join-item btn btn-outline mr-1 rounded-md">
+      <button
+        class="join-item btn btn-outline mr-1 rounded-md"
+        :disabled="currentPage === 1"
+        @click="currentPage--"
+      >
         Previous
       </button>
 
-      <input
-        class="join-item btn btn-square peer/1 hidden"
-        type="radio"
-        name="page"
-        id="page1"
-        checked
-      />
-      <label
-        for="page1"
-        class="join-item btn btn-square peer-checked/1:bg-yellow-400 peer-checked/1:text-black"
-        >1</label
+      <button
+        v-for="page in visiblePages"
+        :key="'page-' + page"
+        class="join-item btn btn-square"
+        :class="{ 'bg-yellow-400 text-black': currentPage === page }"
+        @click="currentPage = page"
       >
+        {{ page }}
+      </button>
 
-      <input
-        class="join-item btn btn-square peer/2 hidden"
-        type="radio"
-        name="page"
-        id="page2"
-      />
-      <label
-        for="page2"
-        class="join-item btn btn-square peer-checked/2:bg-yellow-400 peer-checked/2:text-black"
-        >2</label
+      <button
+        class="join-item btn btn-outline ml-1 rounded-md"
+        :disabled="currentPage === totalPages"
+        @click="currentPage++"
       >
-
-      <input
-        class="join-item btn btn-square peer/3 hidden"
-        type="radio"
-        name="page"
-        id="page3"
-      />
-      <label
-        for="page3"
-        class="join-item btn btn-square peer-checked/3:bg-yellow-400 peer-checked/3:text-black"
-        >3</label
-      >
-
-      <input
-        class="join-item btn btn-square peer/4 hidden"
-        type="radio"
-        name="page"
-        id="page4"
-      />
-      <label
-        for="page4"
-        class="join-item btn btn-square peer-checked/4:bg-yellow-400 peer-checked/4:text-black"
-        >4</label
-      >
-
-      <button class="join-item btn btn-outline ml-1 rounded-md">Next</button>
+        Next
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { getAllDataHistoriesForOneTeacher, getAllDataHistories } from "~/services/history";
+import {
+  getAllDataHistoriesForOneTeacher,
+  getAllDataHistories,
+} from "~/services/history";
 
 definePageMeta({
   middleware: "page",
@@ -195,22 +172,26 @@ const userData = useUserStore();
 const searchQuery = ref("");
 const histories = ref([]);
 const levelMap = ["Beginner", "Basic", "Intermediate", "Advanced", "Expert"];
+const currentPage = ref(1);
+const itemsPerPage = 10;
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 
-const emptyRows = computed(() => 10 - histories.value.length);
+const emptyRows = computed(() =>
+  Math.max(10 - filteredHistories.value.length, 0)
+);
 
 const logoutHandler = async () => {
-  userData.logout();
+  await userData.logout();
   await navigateTo("/login");
 };
 
 onMounted(async () => {
   const getData = async () => {
     try {
-      console.log("role = ",userData.user.role)
+      console.log("role = ", userData.user.role);
       if (userData.user.role === "admin") {
         const res = await getAllDataHistories();
 
@@ -253,5 +234,32 @@ const filteredHistories = computed(() => {
       levelMatch
     );
   });
+});
+
+const paginatedHistories = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return filteredHistories.value.slice(start, end);
+});
+
+const totalPages = computed(() =>
+  Math.ceil(filteredHistories.value.length / itemsPerPage)
+);
+
+const visiblePages = computed(() => {
+  const pages = [];
+  const maxVisible = 2;
+  let start = Math.max(currentPage.value - 1, 1);
+  let end = Math.min(start + maxVisible - 1, totalPages.value);
+
+  // Adjust if di akhir agar tetap dua tombol saat mendekati akhir
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(end - maxVisible + 1, 1);
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
 });
 </script>

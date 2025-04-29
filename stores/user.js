@@ -44,6 +44,7 @@ export const useUserStore = defineStore('user', {
         });
 
         if(res.valid){
+          console.log("user data dihapus")
           this.user = null
           return res;
         }

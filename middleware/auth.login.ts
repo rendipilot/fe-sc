@@ -12,6 +12,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     valid: boolean;
   }
 
+  const userData = useUserStore();
+
   try {
     if (process.server) {
       console.log("memanggil dot.met dari login page server");
@@ -30,14 +32,17 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       }
     }else if (process.client) {
       console.log("memanggil dot.met dari login page local");
+      const headers = useRequestHeaders(["cookie"]);
       const res: UserResponse = await $fetch("http://localhost:5000/me", {
         method: "GET",
+        headers: headers.cookie ? { Cookie: headers.cookie } : {},
         credentials: "include",
       });
 
       console.log("data res",res)
 
-      if (res && to.path === "/login") {
+      if (res && to.path === "/login" && userData.user) {
+        console.log("data user", userData.user)
         console.log("return navigate dipanggil=", res)
         return navigateTo("/");
       }
