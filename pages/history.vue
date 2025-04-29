@@ -248,7 +248,7 @@ const totalPages = computed(() =>
 
 const visiblePages = computed(() => {
   const pages = [];
-  const maxVisible = 2;
+  const maxVisible = 3;
   let start = Math.max(currentPage.value - 1, 1);
   let end = Math.min(start + maxVisible - 1, totalPages.value);
 

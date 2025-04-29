@@ -7,7 +7,9 @@
         </h2></NuxtLink
       >
       <div class="flex gap-2 mr-6">
-        <p class="text-white font-semibold">Hai andrian</p>
+        <p class="text-white font-semibold">
+          Hai {{ userData.user.username.split(" ")[0] }}
+        </p>
         <button class="text-white hover:text-[#FBBF24]" @click="toggleDropdown">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -98,14 +100,14 @@
         </thead>
         <tbody>
           <!-- Render data yang ada -->
-          <tr v-for="(person, index) in people" :key="index">
+          <tr v-for="(teacher, index) in teachers" :key="index">
             <th>{{ index + 1 }}</th>
-            <td>{{ person.name }}</td>
-            <td>{{ person.email }}</td>
-            <td>{{ person.join }}</td>
+            <td>{{ teacher.username }}</td>
+            <td>{{ teacher.email }}</td>
+            <td>{{ teacher.created_at }}</td>
             <td>
               <button
-                :class="person.active ? 'text-[#06D001]' : 'text-red-500'"
+                :class="teacher.active ? 'text-[#06D001]' : 'text-red-500'"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -125,11 +127,18 @@
             </td>
             <td>
               <div class="flex gap-4">
-                <button class="px-2 py-2 text-[#FBBF24] rounded-md" @click="editHandler(person.id)">
+                <button
+                  class="px-2 py-2 text-[#FBBF24] rounded-md"
+                  @click="editHandler(teacher.id)"
+                >
                   Edit
                 </button>
-                <button class="px-2 py-2 text-red-500 rounded-md" @click="deleteHandler(person.id)">
-                  Delete
+                <button
+                  class="px-2 py-2 rounded-md"
+                  :class="teacher.active ? 'text-red-500' : 'text-green-500'"
+                  @click="deleteActiveHandler(teacher.id, teacher.active ? 'deactivate' : 'activate')"
+                >
+                  {{ teacher.active ? "Deactivate" : "Activate" }}
                 </button>
               </div>
             </td>
@@ -137,7 +146,7 @@
 
           <!-- Tambahkan baris kosong kalau kurang dari 10 -->
           <tr v-for="i in emptyRows" :key="'empty-' + i">
-            <th class="opacity-50">{{ people.length + i }}</th>
+            <th class="opacity-50">{{ teachers.length + i }}</th>
             <td class="opacity-50">-</td>
             <td class="opacity-50">-</td>
             <td class="opacity-50">-</td>
@@ -205,18 +214,23 @@
     <!-- Modal -->
     <dialog ref="modalRef" class="modal">
       <div class="modal-box bg-[#18181B]">
-        <h3 class="text-lg font-bold text-white">Add Teacher</h3>
-        <form class="mt-4">
+        <h3 class="text-lg font-bold text-white">{{ modalTitle }} Teacher</h3>
+        <form class="mt-4" @submit.prevent="addUpdateTeacherHandler">
           <div class="flex flex-col gap-2 mt-2">
             <label class="ml-6">Nama</label>
-            <input :value="username" class="w-auto mx-6 py-2 px-2 rounded-md bg-[#242427]" />
+            <input
+              v-model="username"
+              required
+              class="w-auto mx-6 py-2 px-2 rounded-md bg-[#242427]"
+            />
           </div>
           <div class="flex flex-col gap-2 mt-2">
             <label class="ml-6">Email</label>
             <input
               :type="email"
-              :value="emailUser"
+              v-model="emailUser"
               pattern=".+@gmail\.com"
+              required
               class="w-auto mx-6 py-2 px-2 rounded-md bg-[#242427]"
             />
           </div>
@@ -225,11 +239,12 @@
             <div class="flex items-center gap-2 mx-6">
               <input
                 class="py-2 px-2 rounded-md bg-[#242427] text-white w-full"
-                :value="password"
+                v-model="password"
+                required
                 readonly
               />
               <button
-              type="button"
+                type="button"
                 @click="generatePassword"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md"
               >
@@ -237,22 +252,23 @@
               </button>
             </div>
           </div>
+          <p v-if="modalMsg" class="text-red-500">{{ modalMsg }}</p>
+          <div class="modal-action">
+            <button type="submit" class="bg-[#FBBF24] btn">Save</button>
+            <button class="btn bg-red-500" @click="closeModal">Tutup</button>
+          </div>
         </form>
-        <div class="modal-action">
-          <button class="bg-[#FBBF24] btn">Save</button>
-          <button class="btn bg-red-500" @click="closeModal">
-            Tutup
-          </button>
-        </div>
       </div>
     </dialog>
 
     <dialog class="modal" ref="modalDeleteTeacher">
       <div class="modal-box">
-        <h3>Hapus Teacher</h3>
-        <p class="mt-2 font-semibold">Apakah anda yakin menghapus data guru ini?</p>
+        <h3>{{ modalActivationTitle }} Teacher</h3>
+        <p class="mt-2 font-semibold">
+          Apakah anda yakin {{ modalActivationTitle === "activate" ? "aktivasi" : "menonaktifkan" }} data guru ini?
+        </p>
         <div class="modal-action">
-          <button class="bg-[#FBBF24] btn">Save</button>
+          <button class="bg-[#FBBF24] btn" @click="deleteActiveTeacher">Save</button>
           <button class="btn bg-red-500" @click="closeModalDeleteTeacher">
             Tutup
           </button>
@@ -264,18 +280,25 @@
 
 <script setup>
 import { ref } from "vue";
+import { activateTeacherData, createTeacherData, deleteTeacherData, editTeacherData, getAllTeacherData } from "~/services/teacher";
 
 definePageMeta({
-  middleware: ["page-admin"]
-})
+  middleware: ["page-admin"],
+});
 
 const isDropdownOpen = ref(false);
 const modalRef = ref(null);
-const modalDeleteTeacher = ref(null)
-const username = ref('')
-const emailUser = ref('')
-const password = ref('')
+const modalDeleteTeacher = ref(null);
+const username = ref("");
+const emailUser = ref("");
+const password = ref("");
 const userData = useUserStore();
+const teachers = ref([]);
+const modalMsg = ref(null);
+const modalTitle = ref("Add");
+const teacherId = ref (null)
+const deleteMsg = ref(null)
+const modalActivationTitle  = ref("deactivate")
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
@@ -306,14 +329,17 @@ const people = [
 ];
 
 // Hitung berapa baris kosong yang perlu ditambahkan
-const emptyRows = 10 - people.length;
+const emptyRows = computed(() => 10 - teachers.value.length);
 
 const modelHandler = () => {
   modalRef.value?.showModal();
 };
 
 const closeModal = () => {
-  password.value = ''
+  password.value = "";
+  username.value = "";
+  emailUser.value = "";
+  teacherId.value = null
   modalRef.value?.close();
 };
 
@@ -327,26 +353,119 @@ const logoutHandler = async () => {
 };
 
 const generatePassword = () => {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let newPassword = ''
+  const chars =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let newPassword = "";
   for (let i = 0; i < 8; i++) {
-    const randomIndex = Math.floor(Math.random() * chars.length)
-    newPassword += chars[randomIndex]
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    newPassword += chars[randomIndex];
   }
-  password.value = newPassword
-}
+  password.value = newPassword;
+};
 
 const editHandler = (id) => {
-  const person = people.find(p => p.id === id)
-  username.value = person.name
-  emailUser.value = person.email
+  const teacher = teachers.value.find((p) => p.id === id);
+  username.value = teacher.username;
+  emailUser.value = teacher.email;
+  modalTitle.value = "Edit";
+  teacherId.value = id
 
-  modalRef.value?.showModal()
+  modalRef.value?.showModal();
+};
 
-  console.log(username.value)
-}
-
-const deleteHandler = (id) => {
+const deleteActiveHandler = (id, action) => {
+  teacherId.value = id
+  console.log("action = ",action)
+  if(action === "activate"){
+    modalActivationTitle.value = action
+  }
   modalDeleteTeacher.value?.showModal();
+};
+
+const deleteActiveTeacher = async() => {
+  try {
+    if(modalActivationTitle.value === "deactivate"){
+      const res = await deleteTeacherData({
+        teacher_id: teacherId.value
+      });
+
+      if (res.valid) {
+        const res = await getAllTeacherData();
+        teacherId.value = null
+        teachers.value = res.data;
+        modalDeleteTeacher.value?.close()
+      }
+    }else{
+      const res = await activateTeacherData({
+        teacher_id: teacherId.value
+      });
+
+      if (res.valid) {
+        const res = await getAllTeacherData();
+        teacherId.value = null
+        teachers.value = res.data;
+        modalActivationTitle.value = "deactivate"
+        modalDeleteTeacher.value?.close()
+      }
+    }
+  } catch (error) {
+    deleteMsg.value = error
+  }
 }
+
+const addUpdateTeacherHandler = async () => {
+  try {
+    if (modalTitle === "Add") {
+      const res = await createTeacherData({
+        email: emailUser.value,
+        username: username.value,
+        password: password.value,
+      });
+
+      if (res.valid) {
+        const res = await getAllTeacherData();
+        teachers.value = res.data;
+        closeModal()
+      }
+    }else{
+      const res = await editTeacherData({
+        email: emailUser.value,
+        username: username.value,
+        password: password.value,
+        teacher_id: teacherId.value
+      });
+
+      if (res.valid) {
+        const res = await getAllTeacherData();
+        teachers.value = res.data;
+        
+        closeModal()
+      }
+    }
+  } catch (error) {
+    modalMsg.value = error;
+  }
+};
+
+onMounted(async () => {
+  const getData = async () => {
+    try {
+      console.log("role = ", userData.user.role);
+      if (userData.user.role === "admin") {
+        const res = await getAllTeacherData();
+
+        if (!res) {
+          throw new Error("gagal mendapatkan data teacher");
+        }
+
+        // Simpan data history ke variabel history jika diperlukan
+        teachers.value = res.data;
+      }
+    } catch (error) {
+      console.log("gagal mendapatkan data history", error);
+    }
+  };
+
+  await getData(); // Panggil fungsi getData
+});
 </script>
