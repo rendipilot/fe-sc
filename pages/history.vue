@@ -98,14 +98,14 @@
         <tbody>
           <!-- Render data yang ada -->
           <tr v-for="(history, index) in paginatedHistories" :key="index">
-            <th>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</th>
-            <td>{{ history.name }}</td>
-            <td>{{ history.creativity_score }}</td>
-            <td>{{ history.logical_score }}</td>
-            <td>{{ history.complexity_score }}</td>
-            <td>{{ levelMap[Math.round(history.level_score)] }}</td>
-            <td>{{ history.created_at }}</td>
-            <td>{{ history.username }}</td>
+            <th class="py-4">{{ (currentPage - 1) * itemsPerPage + index + 1 }}</th>
+            <td class="py-4">{{ history.name }}</td>
+            <td class="py-4">{{ history.creativity_score }}</td>
+            <td class="py-4">{{ history.logical_score }}</td>
+            <td class="py-4">{{ history.complexity_score }}</td>
+            <td class="py-4">{{ levelMap[Math.round(history.level_score)] }}</td>
+            <td class="py-4">{{ history.created_at }}</td>
+            <td class="py-4">{{ history.username }}</td>
           </tr>
 
           <!-- Tambahkan baris kosong kalau kurang dari 10 -->
@@ -113,14 +113,14 @@
             v-for="i in Math.max(itemsPerPage - paginatedHistories.length, 0)"
             :key="'empty-' + i"
           >
-            <th class="opacity-50">{{ paginatedHistories.length + i }}</th>
-            <td class="opacity-50">-</td>
-            <td class="opacity-50">-</td>
-            <td class="opacity-50">-</td>
-            <td class="opacity-50">-</td>
-            <td class="opacity-50">-</td>
-            <td class="opacity-50">-</td>
-            <td class="opacity-50">-</td>
+            <th class="opacity-50 py-4">{{ paginatedHistories.length + i }}</th>
+            <td class="opacity-50 py-4">-</td>
+            <td class="opacity-50 py-4">-</td>
+            <td class="opacity-50 py-4">-</td>
+            <td class="opacity-50 py-4">-</td>
+            <td class="opacity-50 py-4">-</td>
+            <td class="opacity-50 py-4">-</td>
+            <td class="opacity-50 py-4">-</td>
           </tr>
         </tbody>
       </table>
