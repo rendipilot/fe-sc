@@ -68,17 +68,18 @@
         </div>
       </div>
     </div>
-    <div class="flex mt-10 w-[80%] mx-auto">
-      <h2 class="text-3xl font-semibold">Teacher</h2>
-    </div>
-    <div class="flex w-[80%] mx-auto mt-5 justify-between items-center">
+    <div class="flex w-[80%] mx-auto mt-10 justify-between items-center">
+      <div class="flex gap-2">
+        <h2 class="text-3xl font-semibold">Teacher</h2>
       <button
         class="py-2 px-2 bg-[#FBBF24] rounded-md font-semibold"
         @click="modelHandler"
       >
         New Teacher
       </button>
+      </div>
       <input
+      v-model="searchQuery"
         class="w-auto py-4 px-4 text-gray-200 rounded-md bg-[#242427]"
         placeholder="searching"
       />
@@ -100,8 +101,8 @@
         </thead>
         <tbody>
           <!-- Render data yang ada -->
-          <tr v-for="(teacher, index) in teachers" :key="index">
-            <th>{{ index + 1 }}</th>
+          <tr v-for="(teacher, index) in paginatedTeachers" :key="index">
+            <th>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</th>
             <td>{{ teacher.username }}</td>
             <td>{{ teacher.email }}</td>
             <td>{{ teacher.created_at }}</td>
@@ -145,70 +146,36 @@
           </tr>
 
           <!-- Tambahkan baris kosong kalau kurang dari 10 -->
-          <tr v-for="i in emptyRows" :key="'empty-' + i">
-            <th class="opacity-50">{{ teachers.length + i }}</th>
-            <td class="opacity-50">-</td>
-            <td class="opacity-50">-</td>
-            <td class="opacity-50">-</td>
+          <tr v-for="i in Math.max(itemsPerPage - paginatedTeachers.length, 0)"
+          :key="'empty-' + i">
+            <th class="opacity-50 py-5">{{ paginatedTeachers.length + i }}</th>
+            <td class="opacity-50 py-5">-</td>
+            <td class="opacity-50 py-5">-</td>
+            <td class="opacity-50 py-5">-</td>
+            <td class="opacity-50 py-5">-</td>
+            <td class="opacity-50 py-5">-</td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class="join mt-4 w-[80%] justify-end mx-auto">
-      <button class="join-item btn btn-outline mr-1 rounded-md">
+      <button class="join-item btn btn-outline mr-1 rounded-md" :disabled="currentPage === 1"
+      @click="currentPage--">
         Previous
       </button>
-
-      <input
-        class="join-item btn btn-square peer/1 hidden"
-        type="radio"
-        name="page"
-        id="page1"
-        checked
-      />
-      <label
-        for="page1"
-        class="join-item btn btn-square peer-checked/1:bg-yellow-400 peer-checked/1:text-black"
-        >1</label
+      
+      <button
+        v-for="page in visiblePages"
+        :key="'page-' + page"
+        class="join-item btn btn-square"
+        :class="{ 'bg-yellow-400 text-black': currentPage === page }"
+        @click="currentPage = page"
       >
+        {{ page }}
+      </button>
 
-      <input
-        class="join-item btn btn-square peer/2 hidden"
-        type="radio"
-        name="page"
-        id="page2"
-      />
-      <label
-        for="page2"
-        class="join-item btn btn-square peer-checked/2:bg-yellow-400 peer-checked/2:text-black"
-        >2</label
-      >
-
-      <input
-        class="join-item btn btn-square peer/3 hidden"
-        type="radio"
-        name="page"
-        id="page3"
-      />
-      <label
-        for="page3"
-        class="join-item btn btn-square peer-checked/3:bg-yellow-400 peer-checked/3:text-black"
-        >3</label
-      >
-
-      <input
-        class="join-item btn btn-square peer/4 hidden"
-        type="radio"
-        name="page"
-        id="page4"
-      />
-      <label
-        for="page4"
-        class="join-item btn btn-square peer-checked/4:bg-yellow-400 peer-checked/4:text-black"
-        >4</label
-      >
-
-      <button class="join-item btn btn-outline ml-1 rounded-md">Next</button>
+      <button class="join-item btn btn-outline ml-1 rounded-md" :disabled="currentPage === totalPages"
+      @click="currentPage++">Next</button>
     </div>
 
     <!-- Modal -->
@@ -299,34 +266,14 @@ const modalTitle = ref("Add");
 const teacherId = ref (null)
 const deleteMsg = ref(null)
 const modalActivationTitle  = ref("deactivate")
+const currentPage = ref(1);
+const itemsPerPage = 10;
+const searchQuery = ref("");
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 
-const people = [
-  {
-    id: 1,
-    name: "Rendy Eka Febriyanto",
-    email: "test@gmail.com",
-    join: "2022",
-    active: true,
-  },
-  {
-    id: 2,
-    name: "Indra Kurniawan",
-    email: "test@gmail.com",
-    join: "2022",
-    active: true,
-  },
-  {
-    id: 3,
-    name: "Muhammada Andriyan Ichsan",
-    email: "test@gmail.com",
-    join: "2024",
-    active: true,
-  },
-];
 
 // Hitung berapa baris kosong yang perlu ditambahkan
 const emptyRows = computed(() => 10 - teachers.value.length);
@@ -467,5 +414,44 @@ onMounted(async () => {
   };
 
   await getData(); // Panggil fungsi getData
+});
+
+const filteredTeachers = computed(() => {
+  return teachers.value.filter((teacher) => {
+    const search = searchQuery.value.toLowerCase();
+
+
+    return (
+      teacher.username.toLowerCase().includes(search) ||
+      teacher.created_at.toLowerCase().includes(search)
+    );
+  });
+});
+
+const paginatedTeachers = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return filteredTeachers.value.slice(start, end);
+});
+
+const totalPages = computed(() =>
+  Math.ceil(filteredTeachers.value.length / itemsPerPage)
+);
+
+const visiblePages = computed(() => {
+  const pages = [];
+  const maxVisible = 3;
+  let start = Math.max(currentPage.value - 1, 1);
+  let end = Math.min(start + maxVisible - 1, totalPages.value);
+
+  // Adjust if di akhir agar tetap dua tombol saat mendekati akhir
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(end - maxVisible + 1, 1);
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
 });
 </script>
