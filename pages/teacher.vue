@@ -362,7 +362,7 @@ const deleteActiveTeacher = async() => {
 
 const addUpdateTeacherHandler = async () => {
   try {
-    if (modalTitle === "Add") {
+    if (modalTitle.value === "Add") {
       const res = await createTeacherData({
         email: emailUser.value,
         username: username.value,
