@@ -375,10 +375,11 @@ const addUpdateTeacherHandler = async () => {
         closeModal()
       }
     }else{
+      const teacher = teachers.value.find((p) => p.id === teacherId.value);
       const res = await editTeacherData({
         email: emailUser.value,
         username: username.value,
-        password: password.value,
+        password: password.value ? password.value : teacher.password,
         teacher_id: teacherId.value
       });
 
