@@ -242,6 +242,11 @@ const handleDeleteFile = () => {
 
 const sendDataScratch = async() => {
   const res = await sendFileScratch(selectedFile.value);
+
+  if(res === null){
+    return navigateTo("/login")
+  }
+
   if(res !== null){
     complexity.value = res.data.complexity;
     creativity.value = res.data.creativity;
